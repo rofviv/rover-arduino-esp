@@ -4,8 +4,8 @@
 #include <ArduinoJson.h>
 
 #ifndef STASSID
-#define STASSID "OMEN-PC"
-#define STAPSK  "Pass123!"
+#define STASSID "ROVER-PC"
+#define STAPSK  "097yA55&"
 #define EEPROM_SIZE 9
 #endif
 
