@@ -4,8 +4,8 @@
 #include <ArduinoJson.h>
 
 #ifndef STASSID
-#define STASSID "ROVER-PC"
-#define STAPSK  "097yA55&"
+#define STASSID "OMEN-PC"
+#define STAPSK  "Pass123!"
 #define EEPROM_SIZE 9
 #endif
 
@@ -70,155 +70,40 @@ void handlestate2() {
   server.send(200, "text/json", json);
 }
 
-void secondlock() {
-  String value = server.arg("value");
-  if (!value.isEmpty()) {
-    int number = value.toInt();
-    if (number == 0) {
-      state3 = LOW;
-    } else {
-      state3 = HIGH;
-    }
-    digitalWrite(relay3, state3);
-    EEPROM.write(3, state3);
-    EEPROM.commit();
-  
-    StaticJsonBuffer<300> jsonBuffer;
-    JsonObject &root = jsonBuffer.createObject();
-    root["status"]= "Success";
-    root["data"]= state3;
-  
-    String json;
-    root.prettyPrintTo(json);
-    server.send(200, "text/json", json);
-  } else {
-    StaticJsonBuffer<300> jsonBuffer;
-    JsonObject &root = jsonBuffer.createObject();
-    root["status"]= "Failed";
-    root["message"]= "?value=0|1 is missing";
-  
-    String json;
-    root.prettyPrintTo(json);
-    server.send(400, "text/json", json);
-  }
-}
+void handlestate3() {
+  state3 = !state3;
+  digitalWrite(relay3, state3);
+  EEPROM.write(3, state3);
+  EEPROM.commit();
 
-void firstlock() {
-  String value = server.arg("value");
-  if (!value.isEmpty()) {
-    int number = value.toInt();
-    if (number == 0) {
-      closefirstlock();
-    } else {
-      openfirstlock();
-    }
-  } else {
-    StaticJsonBuffer<300> jsonBuffer;
-    JsonObject &root = jsonBuffer.createObject();
-    root["status"]= "Failed";
-    root["message"]= "?value=0|1 is missing";
-  
-    String json;
-    root.prettyPrintTo(json);
-    server.send(400, "text/json", json);
-  }
-}
-
-void openfirstlock() {
-  state8 = LOW;
-  state6 = HIGH;
-  state7 = HIGH;
-  state4 = HIGH;
-  digitalWrite(relay8, state8);
-  delay(1000);
-  EEPROM.write(8, state8);
-  EEPROM.commit();
-  digitalWrite(relay6, state6);
-  digitalWrite(relay7, state7);
-  EEPROM.write(6, state6);
-  EEPROM.commit();
-  EEPROM.write(7, state7);
-  EEPROM.commit();
-  delay(1000);
-  digitalWrite(relay4, state4);
-  EEPROM.write(4, state4);
-  EEPROM.commit();
-  delay(1000);
-  state8 = HIGH;
-  digitalWrite(relay8, state8);
-  EEPROM.write(8, state8);
-  EEPROM.commit();
-  
-  StaticJsonBuffer<700> jsonBuffer;
+  StaticJsonBuffer<300> jsonBuffer;
   JsonObject &root = jsonBuffer.createObject();
   root["status"]= "Success";
-  root["relay4"]= state4;
-  root["relay6"]= state6;
-  root["relay7"]= state7;
-  root["relay8"]= state8;
+  root["data"]= state3;
 
   String json;
   root.prettyPrintTo(json);
   server.send(200, "text/json", json);
 }
 
-void closefirstlock() {
-  state8 = LOW;
-  state6 = LOW;
-  state7 = LOW;
-  state4 = LOW;
-  digitalWrite(relay8, state8);
-  delay(1000);
-  EEPROM.write(8, state8);
-  EEPROM.commit();
-  digitalWrite(relay6, state6);
-  digitalWrite(relay7, state7);
-  EEPROM.write(6, state6);
-  EEPROM.commit();
-  EEPROM.write(7, state7);
-  EEPROM.commit();
-  delay(1000);
-  state8 = HIGH;
-  digitalWrite(relay8, state8);
-  EEPROM.write(8, state8);
-  EEPROM.commit();
-  delay(20000);
-  state8 = LOW;
-  digitalWrite(relay8, state8);
-  EEPROM.write(8, state8);
-  EEPROM.commit();
-  delay(1000);
+void handlestate4() {
+  state4 = !state4;
   digitalWrite(relay4, state4);
   EEPROM.write(4, state4);
   EEPROM.commit();
-  
-  
-  StaticJsonBuffer<700> jsonBuffer;
+
+  StaticJsonBuffer<300> jsonBuffer;
   JsonObject &root = jsonBuffer.createObject();
   root["status"]= "Success";
-  root["relay4"]= state4;
-  root["relay6"]= state6;
-  root["relay7"]= state7;
-  root["relay8"]= state8;
+  root["data"]= state4;
 
   String json;
   root.prettyPrintTo(json);
   server.send(200, "text/json", json);
 }
 
-void frontlight() {
-  String value = server.arg("value");
-  if (!value.isEmpty()) {
-    int number = value.toInt();
-    if (number == 0) {
-      state5 = LOW;
-    } else {
-      state5 = HIGH;
-    }
-  } else {
-    state5 = !state5;
-  }
-
+void handlestate5() {
+  state5 = !state5;
   digitalWrite(relay5, state5);
   EEPROM.write(5, state5);
   EEPROM.commit();
@@ -227,6 +112,54 @@ void frontlight() {
   JsonObject &root = jsonBuffer.createObject();
   root["status"]= "Success";
   root["data"]= state5;
+
+  String json;
+  root.prettyPrintTo(json);
+  server.send(200, "text/json", json);
+}
+
+void handlestate6() {
+  state6 = !state6;
+  digitalWrite(relay6, state6);
+  EEPROM.write(6, state6);
+  EEPROM.commit();
+
+  StaticJsonBuffer<300> jsonBuffer;
+  JsonObject &root = jsonBuffer.createObject();
+  root["status"]= "Success";
+  root["data"]= state6;
+
+  String json;
+  root.prettyPrintTo(json);
+  server.send(200, "text/json", json);
+}
+
+void handlestate7() {
+  state7 = !state7;
+  digitalWrite(relay7, state7);
+  EEPROM.write(7, state7);
+  EEPROM.commit();
+
+  StaticJsonBuffer<300> jsonBuffer;
+  JsonObject &root = jsonBuffer.createObject();
+  root["status"]= "Success";
+  root["data"]= state7;
+
+  String json;
+  root.prettyPrintTo(json);
+  server.send(200, "text/json", json);
+}
+
+void handlestate8() {
+  state8 = !state8;
+  digitalWrite(relay8, state8);
+  EEPROM.write(8, state8);
+  EEPROM.commit();
+
+  StaticJsonBuffer<300> jsonBuffer;
+  JsonObject &root = jsonBuffer.createObject();
+  root["status"]= "Success";
+  root["data"]= state8;
 
   String json;
   root.prettyPrintTo(json);
@@ -256,7 +189,6 @@ void getstate() {
   setrelaystate();
 }
 
-
 void setup() {
   Serial.begin(115200);
   pinMode(relay1, OUTPUT);
@@ -284,10 +216,14 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   server.on("/", checkStatusRelay);
-  server.on("/relay2", handlestate2); // FREE
-  server.on("/first-lock", firstlock);
-  server.on("/second-lock", secondlock);
-  server.on("/front-light", frontlight);
+  server.on("/relay1", handlestate1);
+  server.on("/relay2", handlestate2);
+  server.on("/relay3", handlestate3);
+  server.on("/relay4", handlestate4);
+  server.on("/relay5", handlestate5);
+  server.on("/relay6", handlestate6);
+  server.on("/relay7", handlestate7);
+  server.on("/relay8", handlestate8);
 
   server.begin();
   getstate();
